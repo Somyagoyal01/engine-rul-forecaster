@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 
-from rul import data, features, model, policy
+import data
+import features
+import model
+import policy
 
 
 def test_labels_and_cap():
@@ -47,7 +50,7 @@ def test_model_beats_baseline_quickly():
 
 def test_saved_models_load_and_predict():
     from pathlib import Path
-    m = model.load_models(Path(__file__).resolve().parents[1] / "artifacts")
+    m = model.load_models(Path(__file__).resolve().parent)
     _, test, sensors = data.load()
     ft = features.build(test[test.unit == 1], sensors)
     p = m["point"].predict(ft[m["cols"]])

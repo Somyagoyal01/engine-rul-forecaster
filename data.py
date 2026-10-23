@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 
-DATA = Path(__file__).resolve().parents[1] / "data"
+DATA = Path(__file__).resolve().parent / "data"
 COLS = ["unit", "cycle", "op1", "op2", "op3"] + [f"s{i}" for i in range(1, 22)]
 RUL_CAP = 125  # piecewise-linear target: early life is treated as "healthy", standard for C-MAPSS
 

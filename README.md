@@ -4,7 +4,7 @@ This project predicts the **Remaining Useful Life (RUL)** of turbofan engines fr
 
 Data: NASA **C-MAPSS FD001** (public, downloaded automatically on first run): 100 training engines run to failure, plus 100 test engines cut off at a random point with the true RUL given.
 
-![engine view](docs/screenshot_engine.png)
+![engine view](screenshot_engine.png)
 
 ## Why it's more than "fit a regressor"
 
@@ -18,7 +18,7 @@ Data: NASA **C-MAPSS FD001** (public, downloaded automatically on first run): 10
 | Explainability | SHAP TreeExplainer per prediction | Shows which sensors are pulling RUL down for this engine |
 | Decision | Replays every training engine cycle by cycle on **out-of-fold** predictions. Alert thresholds are tuned on 50 engines and **scored on the other 50** | It answers the business question rather than just the ML one |
 
-## Results (`python -m rul.train`, ~3–4 min on a laptop CPU)
+## Results (`python train.py`, ~3–4 min on a laptop CPU)
 
 **Official test set (100 engines, prediction at the last observed cycle):**
 
@@ -50,18 +50,19 @@ Under these assumptions, forecast-based maintenance costs **~58% less** than a f
 
 ```bash
 pip install -r requirements.txt
-python -m rul.train          # optional: retrains (~3-4 min) and rewrites artifacts/ (XGBoost JSON) + results/metrics.json
+python train.py              # optional: retrains (~3-4 min), rewrites the *.json.gz models + metrics.json
 streamlit run app.py         # interactive demo
-pytest -q                    # 6 tests (labels, no look-ahead, NASA score, policy logic, beats baseline, saved models load)
+pytest -q test_rul.py        # 6 tests (labels, no look-ahead, NASA score, policy logic, beats baseline, saved models load)
 ```
 
 ## Files
 
-- `rul/data.py`: load C-MAPSS, build RUL labels, drop constant sensors.
-- `rul/features.py`: rolling, slope and drift features (past-only).
-- `rul/model.py`: XGBoost point and quantile models, engine-wise tuning, NASA score, out-of-fold predictions.
-- `rul/policy.py`: maintenance simulation and cost comparison.
-- `rul/train.py`: end-to-end pipeline that writes the metrics.
+- `data.py`: load C-MAPSS, build RUL labels, drop constant sensors.
+- `features.py`: rolling, slope and drift features (past-only).
+- `model.py`: XGBoost point and quantile models, engine-wise tuning, NASA score, out-of-fold predictions.
+- `policy.py`: maintenance simulation and cost comparison.
+- `train.py`: end-to-end pipeline that writes the metrics.
+- `point.json.gz`, `q10.json.gz`, `q90.json.gz`: trained models (XGBoost JSON); `meta.json`: feature list; `oof_train.csv.gz`: out-of-fold predictions; `metrics.json`: all results.
 - `app.py`: Streamlit app with three tabs: engine health, model performance, and maintenance policy and cost.
 
 ## Limitations / next steps

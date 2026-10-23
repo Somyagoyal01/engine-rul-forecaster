@@ -1,4 +1,4 @@
-"""End-to-end training + evaluation. Run: python -m rul.train  (writes artifacts/ and results/metrics.json)"""
+"""End-to-end training + evaluation. Run: python train.py  (writes the model files and metrics.json next to this script)"""
 import gzip
 import json
 import time
@@ -7,9 +7,12 @@ from pathlib import Path
 import numpy as np
 import shap
 
-from . import data, features, model, policy
+import data
+import features
+import model
+import policy
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parent
 
 
 def run(quick=False):
@@ -66,14 +69,13 @@ def run(quick=False):
     imp = sorted(zip(cols, np.abs(sv).mean(0)), key=lambda t: -t[1])[:12]
     res["shap_top_features"] = [{"feature": f, "mean_abs_shap": round(float(v), 2)} for f, v in imp]
 
-    (ROOT / "artifacts").mkdir(exist_ok=True)
     # native XGBoost JSON format: portable across xgboost versions (unlike pickle)
     for name, mdl in (("point", point), ("q10", q10), ("q90", q90)):
         raw = bytes(mdl.get_booster().save_raw("json"))
-        (ROOT / "artifacts" / f"{name}.json.gz").write_bytes(gzip.compress(raw, 9))
-    (ROOT / "artifacts" / "meta.json").write_text(json.dumps({"cols": cols, "sensors": sensors}))
+        (ROOT / f"{name}.json.gz").write_bytes(gzip.compress(raw, 9))
+    (ROOT / "meta.json").write_text(json.dumps({"cols": cols, "sensors": sensors}))
     oof = train[["unit", "cycle", "rul_true"]].assign(pred=op, p10=olo, p90=ohi)
-    oof.round(2).to_csv(ROOT / "artifacts" / "oof_train.csv.gz", index=False, compression="gzip")
+    oof.round(2).to_csv(ROOT / "oof_train.csv.gz", index=False, compression="gzip")
     res["runtime_sec"] = round(time.time() - t0, 1)
 
     def rnd(o):
@@ -83,11 +85,10 @@ def run(quick=False):
             return [rnd(v) for v in o]
         return round(o, 3) if isinstance(o, float) else o
     res = rnd(res)
-    (ROOT / "results").mkdir(exist_ok=True)
-    (ROOT / "results" / "metrics.json").write_text(json.dumps(res, indent=2, default=lambda o: o.item() if hasattr(o, "item") else str(o)))
+    (ROOT / "metrics.json").write_text(json.dumps(res, indent=2, default=lambda o: o.item() if hasattr(o, "item") else str(o)))
     return res
 
 
 if __name__ == "__main__":
     run()
-    print((ROOT / "results" / "metrics.json").read_text())
+    print((ROOT / "metrics.json").read_text())

@@ -8,7 +8,10 @@ import pandas as pd
 import shap
 import streamlit as st
 
-from rul import data, features, model, policy
+import data
+import features
+import model
+import policy
 
 ROOT = Path(__file__).resolve().parent
 # C-MAPSS sensor meanings (from the dataset documentation)
@@ -26,13 +29,13 @@ st.set_page_config(page_title="Engine RUL Forecaster", layout="wide")
 
 @st.cache_resource
 def load_all():
-    m = model.load_models(ROOT / "artifacts")
+    m = model.load_models(ROOT)
     train, test, sensors = data.load()
     ft = features.build(test, sensors)
     X = ft[m["cols"]]
     test = test.assign(pred=m["point"].predict(X), p10=m["q10"].predict(X), p90=m["q90"].predict(X))
-    metrics = json.loads((ROOT / "results" / "metrics.json").read_text())
-    oof = pd.read_csv(ROOT / "artifacts" / "oof_train.csv.gz")
+    metrics = json.loads((ROOT / "metrics.json").read_text())
+    oof = pd.read_csv(ROOT / "oof_train.csv.gz")
     return m, test, X, metrics, oof, shap.TreeExplainer(m["point"])
 
 
