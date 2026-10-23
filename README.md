@@ -1,5 +1,7 @@
 # Engine RUL Forecaster: predictive maintenance with uncertainty and a cost model
 
+**Live demo: https://somya-engine-rul.streamlit.app** (first load can take ~30 s if the app was asleep)
+
 This project predicts the **Remaining Useful Life (RUL)** of turbofan engines from sensor history, gives an 80% prediction interval, explains each forecast with SHAP, and turns the forecast into a **maintenance decision** that is priced against a fixed-interval schedule.
 
 Data: NASA **C-MAPSS FD001** (public, downloaded automatically on first run): 100 training engines run to failure, plus 100 test engines cut off at a random point with the true RUL given.
