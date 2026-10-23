@@ -1,0 +1,167 @@
+{
+  "data": {
+    "train_engines": 100,
+    "train_rows": 20631,
+    "test_engines": 100,
+    "sensors_used": [
+      "s2",
+      "s3",
+      "s4",
+      "s7",
+      "s8",
+      "s9",
+      "s11",
+      "s12",
+      "s13",
+      "s14",
+      "s15",
+      "s17",
+      "s20",
+      "s21"
+    ],
+    "n_features": 99,
+    "rul_cap": 125
+  },
+  "baselines": {
+    "predict_mean": {
+      "rmse": 41.942,
+      "nasa": 33354.472
+    },
+    "ridge_raw_sensors": {
+      "rmse": 20.825,
+      "nasa": 1251.254
+    },
+    "xgb_raw_sensors": {
+      "rmse": 16.982,
+      "nasa": 908.844
+    }
+  },
+  "tuning": {
+    "best": {
+      "max_depth": 4,
+      "min_child_weight": 20
+    },
+    "grid_engine_wise_cv": [
+      {
+        "cv_rmse": 8.79,
+        "max_depth": 4,
+        "min_child_weight": 20
+      },
+      {
+        "cv_rmse": 8.81,
+        "max_depth": 4,
+        "min_child_weight": 5
+      },
+      {
+        "cv_rmse": 8.96,
+        "max_depth": 6,
+        "min_child_weight": 5
+      },
+      {
+        "cv_rmse": 8.96,
+        "max_depth": 6,
+        "min_child_weight": 20
+      },
+      {
+        "cv_rmse": 9.04,
+        "max_depth": 3,
+        "min_child_weight": 20
+      },
+      {
+        "cv_rmse": 9.07,
+        "max_depth": 3,
+        "min_child_weight": 5
+      }
+    ]
+  },
+  "xgb_features_test": {
+    "rmse": 10.818,
+    "mae": 8.037,
+    "nasa": 165.642,
+    "interval_p10_p90_coverage": 0.86,
+    "avg_interval_width": 32.129,
+    "late_predictions_over_20_cycles": 3
+  },
+  "oof_rmse_all_cycles": 8.819,
+  "maintenance_policy": {
+    "fixed_interval": {
+      "failures": 3,
+      "engines": 50,
+      "avg_wasted_cycles": 72.4,
+      "cost_per_engine": 29.02,
+      "rule": "maintain every engine at cycle 132"
+    },
+    "point_forecast": {
+      "failures": 0,
+      "engines": 50,
+      "avg_wasted_cycles": 11.0,
+      "cost_per_engine": 12.2,
+      "rule": "alert when forecast <= 26 cycles"
+    },
+    "p10_forecast": {
+      "failures": 1,
+      "engines": 50,
+      "avg_wasted_cycles": 10.7,
+      "cost_per_engine": 13.89,
+      "rule": "alert when forecast <= 19 cycles"
+    },
+    "note": "thresholds tuned on 50 engines, scored on the other 50"
+  },
+  "maintenance_policy_assumptions": {
+    "lead_cycles": 15,
+    "cost_unplanned_failure": 100.0,
+    "cost_planned": 10.0,
+    "cost_per_wasted_cycle": 0.2
+  },
+  "shap_top_features": [
+    {
+      "feature": "s15_drift",
+      "mean_abs_shap": 7.98
+    },
+    {
+      "feature": "cycle",
+      "mean_abs_shap": 6.72
+    },
+    {
+      "feature": "s11_drift",
+      "mean_abs_shap": 6.56
+    },
+    {
+      "feature": "s4_drift",
+      "mean_abs_shap": 5.38
+    },
+    {
+      "feature": "s20_drift",
+      "mean_abs_shap": 4.52
+    },
+    {
+      "feature": "s7_drift",
+      "mean_abs_shap": 3.5
+    },
+    {
+      "feature": "s9_drift",
+      "mean_abs_shap": 2.62
+    },
+    {
+      "feature": "s13_drift",
+      "mean_abs_shap": 2.13
+    },
+    {
+      "feature": "s14_drift",
+      "mean_abs_shap": 1.89
+    },
+    {
+      "feature": "s12_drift",
+      "mean_abs_shap": 1.56
+    },
+    {
+      "feature": "s21_drift",
+      "mean_abs_shap": 1.53
+    },
+    {
+      "feature": "s3_mean15",
+      "mean_abs_shap": 1.29
+    }
+  ],
+  "runtime_sec": 218.1
+}
